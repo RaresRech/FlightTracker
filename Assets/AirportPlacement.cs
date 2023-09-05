@@ -10,6 +10,7 @@ public class AirportPlacement : MonoBehaviour
     public class AirportData
     {
         public string Name;
+        public string iata;
         public float Latitude; // In degrees
         public float Longitude; // In degrees
     }
@@ -43,7 +44,7 @@ public class AirportPlacement : MonoBehaviour
             GameObject redDot = Instantiate(redDotPrefab, position, Quaternion.identity);
 
             // Parent the red dot to the sphere
-            redDot.name = airport.Name;
+            redDot.name = airport.iata;
             redDot.transform.parent = transform;
 
             // Add event handlers for mouse enter and exit

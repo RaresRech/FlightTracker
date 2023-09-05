@@ -8,6 +8,10 @@ public class AirportRouteMaker : MonoBehaviour
     [SerializeField]
     private GameObject flightTracker;
 
+    public int numPoints = 50;
+    private LineRenderer lineRenderer;
+
+    private List<Transform> currentAirports;
     private List<string> currentRouteString;
     private Transform previouslySelectedDAirport;
     private Transform previouslySelectedAAirport;
@@ -16,8 +20,11 @@ public class AirportRouteMaker : MonoBehaviour
 
     void Start()
     {
+        currentAirports = new List<Transform>();
         flightTracker = GameObject.Find("Flight Tracker");
         StoreInitialMaterials();
+        lineRenderer = GetComponent<LineRenderer>();
+        lineRenderer.positionCount = numPoints;
     }
 
     void Update()
@@ -28,6 +35,21 @@ public class AirportRouteMaker : MonoBehaviour
         {
             ChangeAirportMaterials(currentRouteString[1], currentRouteString[0]);
         }
+    }
+
+    void DrawLine(Transform startPoint,Transform endPoint)
+    {
+        for (int i = 0; i < numPoints; i++)
+        {
+            float t = i / (float)(numPoints - 1);
+            Vector3 point = Vector3.Slerp(startPoint.position, endPoint.position, t);
+            lineRenderer.SetPosition(i, point);
+        }
+    }
+
+    public void ClearLine()
+    {
+        lineRenderer.enabled=false;
     }
 
     void StoreInitialMaterials()
@@ -53,6 +75,11 @@ public class AirportRouteMaker : MonoBehaviour
         {
             if (child.name == departure || child.name == arrival)
             {
+                if(!currentAirports.Contains(child) )
+                {
+                    Debug.Log("Drawing trail");
+                    currentAirports.Add(child);
+                }
                 Renderer renderer = child.GetComponent<Renderer>();
                 if (renderer != null)
                 {
@@ -75,10 +102,24 @@ public class AirportRouteMaker : MonoBehaviour
                 }
             }
         }
+        if(currentAirports!=null && currentAirports.Count==2)
+        {
+            lineRenderer.enabled=true;
+            DrawLine(currentAirports[0],currentAirports[1]);
+
+        }
+        else
+        {
+            ClearLine();
+        }
     }
 
     void RevertAirportMaterial(Transform airport)
     {
+        if(currentAirports!=null)
+        {
+            currentAirports.Clear();
+        }
         if (airport != null)
         {
             Renderer renderer = airport.GetComponent<Renderer>();
@@ -90,6 +131,7 @@ public class AirportRouteMaker : MonoBehaviour
                     renderer.material = initialMaterial;
                 }
             }
+ 
         }
     }
 }

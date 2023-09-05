@@ -20,7 +20,7 @@ public class SphereRotation : MonoBehaviour
             Vector3 mouseDelta = Input.mousePosition - lastMousePosition;
 
             transform.Rotate(Vector3.up, -mouseDelta.x * rotationSpeed * Time.deltaTime);
-            transform.Rotate(Vector3.left, -mouseDelta.y * rotationSpeed * Time.deltaTime);
+            transform.Rotate(Vector3.left, mouseDelta.y * rotationSpeed * Time.deltaTime);
 
             lastMousePosition = Input.mousePosition;
         }
